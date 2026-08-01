@@ -1,15 +1,49 @@
-# 💫 About Me:
-# 👋 Hi, I'm Devanshi Solanki<br><br><br><br>I'm a Computer Engineering student with an interest in web development and data analytics. I enjoy learning through practical projects, exploring new technologies, and continuously improving my technical and problem-solving skills.<br><br><br><br>* 💼 **I have worked on:** Frontend projects using HTML, CSS, JavaScript, Bootstrap, and jQuery, along with backend development using Python, Django, and SQL.<br><br>* 🔭 **I'm currently working on:** Learning Data Analytics and building beginner-friendly data analytics projects.<br><br>* 🌱 **I'm currently learning:** Pandas, NumPy, Power BI, and Data Analytics.<br><br>* 👯 **I'm looking to collaborate on:** Frontend and beginner-friendly Data Analytics projects.<br><br>* 🤝 **I'm looking for help with:** Python best practices and real-world Data Analytics projects.<br><br>* 🎯 **Current Goal:** Build practical projects that strengthen my analytical skills and apply them to real-world problems.
+<h1 align="center">Hi 👋 I'm Devanshi Solanki</h1>
 
+<br>
 
-## 🌐 Socials:
-[![Discord](https://img.shields.io/badge/Discord-%237289DA.svg?logo=discord&logoColor=white)](https://discord.gg/devanshisolanki_23.8) [![Instagram](https://img.shields.io/badge/Instagram-%23E4405F.svg?logo=Instagram&logoColor=white)](https://instagram.com/devanshi_23.8) [![LinkedIn](https://img.shields.io/badge/LinkedIn-%230077B5.svg?logo=linkedin&logoColor=white)](https://linkedin.com/in/devanshi-solanki-844b5331b) [![Pinterest](https://img.shields.io/badge/Pinterest-%23E60023.svg?logo=Pinterest&logoColor=white)](https://pinterest.com/djsolanki899) [![email](https://img.shields.io/badge/Email-D14836?logo=gmail&logoColor=white)](mailto:djsolanki899@gmail.com) 
+<table>
+<tr>
 
-# 💻 Tech Stack:
-![HTML5](https://img.shields.io/badge/html5-%23E34F26.svg?style=flat&logo=html5&logoColor=white) ![CSS3](https://img.shields.io/badge/css3-%231572B6.svg?style=flat&logo=css3&logoColor=white) ![Python](https://img.shields.io/badge/python-3670A0?style=flat&logo=python&logoColor=ffdd54) ![JavaScript](https://img.shields.io/badge/javascript-%23323330.svg?style=flat&logo=javascript&logoColor=%23F7DF1E) ![Netlify](https://img.shields.io/badge/netlify-%23000000.svg?style=flat&logo=netlify&logoColor=#00C7B7) ![Django](https://img.shields.io/badge/django-%23092E20.svg?style=flat&logo=django&logoColor=white) ![Bootstrap](https://img.shields.io/badge/bootstrap-%238511FA.svg?style=flat&logo=bootstrap&logoColor=white) ![MicrosoftSQLServer](https://img.shields.io/badge/Microsoft%20SQL%20Server-CC2927?style=flat&logo=microsoft%20sql%20server&logoColor=white) ![Postgres](https://img.shields.io/badge/postgres-%23316192.svg?style=flat&logo=postgresql&logoColor=white) ![GitHub](https://img.shields.io/badge/github-%23121011.svg?style=flat&logo=github&logoColor=white) ![Git](https://img.shields.io/badge/git-%23F05033.svg?style=flat&logo=git&logoColor=white) ![Canva](https://img.shields.io/badge/Canva-%2300C4CC.svg?style=flat&logo=Canva&logoColor=white) ![HTML5](https://img.shields.io/badge/html5-%23E34F26.svg?style=flat&logo=html5&logoColor=white) ![JavaScript](https://img.shields.io/badge/javascript-%23323330.svg?style=flat&logo=javascript&logoColor=%23F7DF1E) ![jQuery](https://img.shields.io/badge/jquery-%230769AD.svg?style=flat&logo=jquery&logoColor=white) ![Pandas](https://img.shields.io/badge/pandas-%23150458.svg?style=flat&logo=pandas&logoColor=white)
-# 📊 GitHub Stats:
-![](https://github-readme-stats.shion.dev/api?username=djsolanki-py&theme=shadow_green&hide_border=false&include_all_commits=false&count_private=false)<br/>
-![](https://streak-stats.demolab.com/?user=djsolanki-py&theme=shadow_green&hide_border=false)<br/>
-![](https://github-readme-stats.shion.dev/api/top-langs/?username=djsolanki-py&theme=shadow_green&hide_border=false&include_all_commits=false&count_private=false&layout=compact)
+<td width="40%" align="center" valign="top">
 
-<!-- Proudly created with GPRM ( https://gprm.itsvg.in ) -->
+<img width="280" height="280" alt="2a9ecba62a30406b1630a1036ff760dd-ezgif com-video-to-gif-converter" src="https://github.com/user-attachments/assets/25d730b8-4823-4eb8-bba9-8f81499ea782"/>
+
+</td>
+
+<td width="60%" valign="top">
+
+<h2>👋 About Me</h2>
+
+<p>
+I'm a Computer Engineering student who enjoys learning through practical projects.
+</p>
+
+<p>
+I have worked on frontend development using HTML, CSS, JavaScript, Bootstrap, and jQuery, and I'm currently expanding my knowledge in backend development with Python and Django while exploring Data Analytics.
+</p>
+
+<p>
+I enjoy building practical projects, solving real-world problems, and continuously improving my technical skills.
+</p>
+
+</td>
+
+</tr>
+</table>
+
+---
+
+## 🚀 Current Journey
+
+- 🔭 Working on **Python, Django & Beginner Data Analytics Projects**
+- 🌱 Learning **Pandas, NumPy, Power BI & Data Analytics**
+- 🎯 Goal: **Build practical projects that improve my analytical thinking**
+
+---
+
+## 📊 GitHub Analytics
+
+<p align="center">
+<img width="100%" src="https://github-readme-activity-graph.vercel.app/graph?username=djsolanki-py&theme=github-compact"/>
+</p>
