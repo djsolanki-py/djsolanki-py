@@ -220,102 +220,107 @@ def make_calendar_svg(rows):
 
 
 def make_3d_svg(rows):
-    # Draw every day as a small isometric bar.
-    # The calendar is arranged as 53 weeks x 7 days.
+    # Keep the same filename so the README does not need to change.
+    # This version creates a clean 2D activity chart instead of the 3D view.
     rows = rows[-371:]
-    maximum = max((row["count"] for row in rows), default=1)
 
     width = 1100
-    height = 620
+    height = 430
+    left = 58
+    right = 28
+    top = 75
+    bottom = 65
+
+    chart_width = width - left - right
+    chart_height = height - top - bottom
+
+    maximum = max((row["count"] for row in rows), default=1)
+    total = sum(row["count"] for row in rows)
+
+    def esc(value):
+        return html.escape(str(value), quote=True)
+
+    points = []
+    for i, row in enumerate(rows):
+        x = left + (i / max(1, len(rows) - 1)) * chart_width
+        y = top + chart_height - (row["count"] / maximum) * chart_height
+        points.append((x, y, row))
+
+    line_points = " ".join(f"{x:.1f},{y:.1f}" for x, y, _ in points)
+
+    # Area under the line.
+    area_points = (
+        f"{left:.1f},{top + chart_height:.1f} "
+        + line_points
+        + f" {left + chart_width:.1f},{top + chart_height:.1f}"
+    )
+
     parts = [
         f'<svg xmlns="http://www.w3.org/2000/svg" width="{width}" height="{height}" '
         f'viewBox="0 0 {width} {height}">',
         '<rect width="100%" height="100%" rx="12" fill="#0d1117"/>',
-        '<text x="45" y="34" fill="#f0f6fc" font-family="Arial, sans-serif" '
-        'font-size="18" font-weight="600">3D GitHub activity</text>',
-        '<text x="45" y="54" fill="#8b949e" font-family="Arial, sans-serif" '
-        'font-size="12">Bar height represents daily contribution count</text>',
+
+        '<text x="40" y="32" fill="#f0f6fc" '
+        'font-family="Arial, sans-serif" font-size="19" font-weight="600">'
+        'Daily GitHub activity</text>',
+
+        f'<text x="40" y="53" fill="#8b949e" '
+        f'font-family="Arial, sans-serif" font-size="12">'
+        f'{total} contributions shown • last year</text>',
     ]
 
-    # Isometric calendar projection.
-    origin_x = 545
-    origin_y = 480
-    x_step = 6.2
-    y_step = 8.0
-    height_scale = 55 / maximum if maximum else 1
-
-    # Light floor/grid lines.
-    for week in range(54):
-        x1 = origin_x + week * x_step
-        y1 = origin_y + week * y_step
-        x2 = x1 - 7 * y_step
-        y2 = y1 + 7 * x_step
-        parts.append(
-            f'<line x1="{x1:.1f}" y1="{y1:.1f}" x2="{x2:.1f}" y2="{y2:.1f}" '
-            'stroke="#21262d" stroke-width="1"/>'
-        )
-
-    for day in range(8):
-        x1 = origin_x - day * y_step
-        y1 = origin_y + day * x_step
-        x2 = x1 + 53 * x_step
-        y2 = y1 + 53 * y_step
-        parts.append(
-            f'<line x1="{x1:.1f}" y1="{y1:.1f}" x2="{x2:.1f}" y2="{y2:.1f}" '
-            'stroke="#21262d" stroke-width="1"/>'
-        )
-
-    # One bar per day. Zero-contribution days are skipped, but every
-    # non-zero day remains visible.
-    for index, row in enumerate(rows):
-        count = row["count"]
-        if count <= 0:
+    # Horizontal grid lines and y-axis labels.
+    for value in range(0, maximum + 1):
+        if maximum > 8 and value % max(1, maximum // 4) != 0 and value != maximum:
             continue
 
-        week = index // 7
-        weekday = index % 7
-
-        # Isometric base position.
-        x = origin_x + week * x_step - weekday * y_step
-        y = origin_y + week * y_step + weekday * x_step
-
-        h = max(4, count * height_scale)
-
-        # Diamond-shaped base.
-        half_x = 3.0
-        half_y = 2.8
-
-        p1 = (x, y)
-        p2 = (x + half_x, y + half_y)
-        p3 = (x, y + 2 * half_y)
-        p4 = (x - half_x, y + half_y)
-
-        top1 = (p1[0], p1[1] - h)
-        top2 = (p2[0], p2[1] - h)
-        top3 = (p3[0], p3[1] - h)
-        top4 = (p4[0], p4[1] - h)
-
-        def pts(values):
-            return " ".join(f"{a:.1f},{b:.1f}" for a, b in values)
-
+        y = top + chart_height - (value / maximum) * chart_height
         parts.append(
-            f'<polygon points="{pts([p4, p1, top1, top4])}" '
-            'fill="#006d32" opacity="0.95"/>'
+            f'<line x1="{left}" y1="{y:.1f}" x2="{left + chart_width}" y2="{y:.1f}" '
+            'stroke="#21262d" stroke-width="1"/>'
         )
         parts.append(
-            f'<polygon points="{pts([p1, p2, top2, top1])}" '
-            'fill="#26a641" opacity="0.95"/>'
+            f'<text x="42" y="{y + 4:.1f}" text-anchor="end" fill="#8b949e" '
+            f'font-family="Arial, sans-serif" font-size="10">{value}</text>'
         )
+
+    # Area and line.
+    parts.append(
+        f'<polygon points="{area_points}" fill="#238636" opacity="0.16"/>'
+    )
+    parts.append(
+        f'<polyline points="{line_points}" fill="none" stroke="#39d353" '
+        'stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>'
+    )
+
+    # Show only days with activity as interactive points.
+    for x, y, row in points:
+        if row["count"] <= 0:
+            continue
+
         parts.append(
-            f'<polygon points="{pts([top1, top2, top3, top4])}" '
-            'fill="#39d353">'
-            f'<title>{esc(row["date"])}: {count} contributions</title></polygon>'
+            f'<circle cx="{x:.1f}" cy="{y:.1f}" r="3.5" fill="#39d353">'
+            f'<title>{esc(row["date"])}: {row["count"]} contributions</title></circle>'
         )
+
+    # Month labels.
+    last_month = None
+    for x, y, row in points:
+        month = row["date"][:7]
+        if month != last_month:
+            label = datetime.strptime(row["date"], "%Y-%m-%d").strftime("%b")
+            parts.append(
+                f'<text x="{x:.1f}" y="{height - 28}" fill="#8b949e" '
+                f'font-family="Arial, sans-serif" font-size="10">{label}</text>'
+            )
+            last_month = month
 
     parts.append(
-        '<text x="45" y="590" fill="#8b949e" font-family="Arial, sans-serif" '
-        'font-size="11">Each visible bar represents a day with at least one contribution.</text>'
+        f'<text x="{width - 28}" y="{height - 28}" text-anchor="end" '
+        'fill="#8b949e" font-family="Arial, sans-serif" font-size="10">'
+        'Hover over active points for the date and count</text>'
     )
+
     parts.append("</svg>")
     write_svg(GRAPH_3D_FILE, "\n".join(parts))
 
