@@ -26,28 +26,74 @@ def fetch_contributions():
     with urllib.request.urlopen(request, timeout=30) as response:
         page = response.read().decode("utf-8", errors="replace")
 
-    # GitHub's contribution page contains one element per day with
-    # data-date and data-count attributes.
-    pattern = re.compile(
-        r'data-date="(?P<date>\d{4}-\d{2}-\d{2})"[^>]*'
-        r'data-count="(?P<count>\d+)"'
+    # Current GitHub contribution HTML stores:
+    # - the date and activity level on each contribution <td>
+    # - the exact contribution count in a matching <tool-tip>
+    #
+    # Older versions of this script expected a data-count attribute
+    # directly on the <td>. GitHub no longer exposes it that way.
+
+    tooltip_counts = {}
+
+    tooltip_pattern = re.compile(
+        r'<tool-tip\b[^>]*\bfor="(?P<id>[^"]+)"[^>]*>'
+        r'(?P<text>.*?)'
+        r'</tool-tip>',
+        re.IGNORECASE | re.DOTALL,
     )
 
-    rows = [
-        {"date": m.group("date"), "count": int(m.group("count"))}
-        for m in pattern.finditer(page)
-    ]
-
-    # Some GitHub HTML versions place data-count before data-date.
-    if not rows:
-        pattern = re.compile(
-            r'data-count="(?P<count>\d+)"[^>]*'
-            r'data-date="(?P<date>\d{4}-\d{2}-\d{2})"'
+    for match in tooltip_pattern.finditer(page):
+        tooltip_text = re.sub(r"<[^>]+>", " ", match.group("text"))
+        tooltip_text = unescape(tooltip_text)
+        count_match = re.search(
+            r"(?P<count>[\d,]+)\s+contributions?",
+            tooltip_text,
+            re.IGNORECASE,
         )
-        rows = [
-            {"date": m.group("date"), "count": int(m.group("count"))}
-            for m in pattern.finditer(page)
-        ]
+        tooltip_counts[match.group("id")] = (
+            int(count_match.group("count").replace(",", ""))
+            if count_match
+            else 0
+        )
+
+    rows = []
+
+    # Read each contribution day cell.
+    cell_pattern = re.compile(r"<td\b[^>]*>", re.IGNORECASE)
+
+    for cell in cell_pattern.finditer(page):
+        tag = cell.group(0)
+
+        date_match = re.search(
+            r'\bdata-date="(?P<date>\d{4}-\d{2}-\d{2})"',
+            tag,
+            re.IGNORECASE,
+        )
+        id_match = re.search(
+            r'\bid="(?P<id>contribution-day-component-[^"]+)"',
+            tag,
+            re.IGNORECASE,
+        )
+
+        if not date_match or not id_match:
+            continue
+
+        cell_id = id_match.group("id")
+        count = tooltip_counts.get(cell_id, 0)
+
+        rows.append(
+            {
+                "date": date_match.group("date"),
+                "count": count,
+            }
+        )
+
+    # Remove accidental duplicates while keeping the latest value.
+    unique = {}
+    for row in rows:
+        unique[row["date"]] = row
+
+    rows = sorted(unique.values(), key=lambda row: row["date"])
 
     if not rows:
         raise RuntimeError(
@@ -55,7 +101,6 @@ def fetch_contributions():
             "GitHub may have changed the contribution page HTML."
         )
 
-    rows.sort(key=lambda row: row["date"])
     return rows
 
 
