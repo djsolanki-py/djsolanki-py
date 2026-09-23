@@ -220,12 +220,13 @@ def make_calendar_svg(rows):
 
 
 def make_3d_svg(rows):
-    # Use all days from the last year, but only draw non-zero days as bars.
+    # Draw every day as a small isometric bar.
+    # The calendar is arranged as 53 weeks x 7 days.
     rows = rows[-371:]
     maximum = max((row["count"] for row in rows), default=1)
 
     width = 1100
-    height = 520
+    height = 620
     parts = [
         f'<svg xmlns="http://www.w3.org/2000/svg" width="{width}" height="{height}" '
         f'viewBox="0 0 {width} {height}">',
@@ -236,42 +237,58 @@ def make_3d_svg(rows):
         'font-size="12">Bar height represents daily contribution count</text>',
     ]
 
-    # Isometric projection.
-    ox, oy = 550, 400
-    sx, sy = 3.0, 1.55
-    zscale = 24 / maximum if maximum else 1
-    dx, dy = 5.0, 2.8
+    # Isometric calendar projection.
+    origin_x = 545
+    origin_y = 480
+    x_step = 6.2
+    y_step = 8.0
+    height_scale = 55 / maximum if maximum else 1
 
-    # Draw a light isometric floor grid.
-    for i in range(-55, 56, 10):
-        x1 = ox + i * sx
-        y1 = oy + i * sy
-        x2 = ox + i * sx + 55 * sx
-        y2 = oy + i * sy - 55 * sy
+    # Light floor/grid lines.
+    for week in range(54):
+        x1 = origin_x + week * x_step
+        y1 = origin_y + week * y_step
+        x2 = x1 - 7 * y_step
+        y2 = y1 + 7 * x_step
         parts.append(
             f'<line x1="{x1:.1f}" y1="{y1:.1f}" x2="{x2:.1f}" y2="{y2:.1f}" '
             'stroke="#21262d" stroke-width="1"/>'
         )
 
-    # Draw every 7th day as a bar to keep the 3D view readable.
-    visible = rows[::7]
-    for idx, row in enumerate(visible):
+    for day in range(8):
+        x1 = origin_x - day * y_step
+        y1 = origin_y + day * x_step
+        x2 = x1 + 53 * x_step
+        y2 = y1 + 53 * y_step
+        parts.append(
+            f'<line x1="{x1:.1f}" y1="{y1:.1f}" x2="{x2:.1f}" y2="{y2:.1f}" '
+            'stroke="#21262d" stroke-width="1"/>'
+        )
+
+    # One bar per day. Zero-contribution days are skipped, but every
+    # non-zero day remains visible.
+    for index, row in enumerate(rows):
         count = row["count"]
         if count <= 0:
             continue
 
-        col = idx % 53
-        row_idx = idx // 53
+        week = index // 7
+        weekday = index % 7
 
-        x = ox + (col - row_idx) * dx
-        y = oy + (col + row_idx) * dy
-        h = max(4, count * zscale)
+        # Isometric base position.
+        x = origin_x + week * x_step - weekday * y_step
+        y = origin_y + week * y_step + weekday * x_step
 
-        # Four projected corners.
+        h = max(4, count * height_scale)
+
+        # Diamond-shaped base.
+        half_x = 3.0
+        half_y = 2.8
+
         p1 = (x, y)
-        p2 = (x + dx, y + dy)
-        p3 = (x, y + 2 * dy)
-        p4 = (x - dx, y + dy)
+        p2 = (x + half_x, y + half_y)
+        p3 = (x, y + 2 * half_y)
+        p4 = (x - half_x, y + half_y)
 
         top1 = (p1[0], p1[1] - h)
         top2 = (p2[0], p2[1] - h)
@@ -282,19 +299,22 @@ def make_3d_svg(rows):
             return " ".join(f"{a:.1f},{b:.1f}" for a, b in values)
 
         parts.append(
-            f'<polygon points="{pts([p4, p1, top1, top4])}" fill="#006d32" opacity="0.95"/>'
+            f'<polygon points="{pts([p4, p1, top1, top4])}" '
+            'fill="#006d32" opacity="0.95"/>'
         )
         parts.append(
-            f'<polygon points="{pts([p1, p2, top2, top1])}" fill="#26a641" opacity="0.95"/>'
+            f'<polygon points="{pts([p1, p2, top2, top1])}" '
+            'fill="#26a641" opacity="0.95"/>'
         )
         parts.append(
-            f'<polygon points="{pts([top1, top2, top3, top4])}" fill="#39d353">'
+            f'<polygon points="{pts([top1, top2, top3, top4])}" '
+            'fill="#39d353">'
             f'<title>{esc(row["date"])}: {count} contributions</title></polygon>'
         )
 
     parts.append(
-        '<text x="45" y="485" fill="#8b949e" font-family="Arial, sans-serif" '
-        'font-size="11">Tip: open the SVG directly to see the daily tooltips.</text>'
+        '<text x="45" y="590" fill="#8b949e" font-family="Arial, sans-serif" '
+        'font-size="11">Each visible bar represents a day with at least one contribution.</text>'
     )
     parts.append("</svg>")
     write_svg(GRAPH_3D_FILE, "\n".join(parts))
