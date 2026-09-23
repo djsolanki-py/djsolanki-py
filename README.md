@@ -45,5 +45,7 @@ I enjoy building practical projects, solving real-world problems, and continuous
 ## 📊 GitHub Analytics
 
 <p align="center">
-<img width="100%" src="https://github-readme-activity-graph.vercel.app/graph?username=djsolanki-py&theme=github-compact"/>
+    <img src="./contribution-3d.svg"
+         width="100%"
+         alt="Devanshi's 3D GitHub Contribution Activity">
 </p>
